@@ -9,6 +9,7 @@ Claude Code 플러그인, MCP 서버, OpenAI Codex 플러그인, Cursor 확장 �
 | [claude-skills](plugins/claude-skills) | 개인용 Claude Code 스킬 라이브러리 |
 | [qa-workflow](plugins/qa-workflow) | QA 리포트 → 코드 수정 → GitHub PR 자동화 워크플로우 |
 | [debate](plugins/debate) | Claude ↔ Codex 멀티라운드 토론 + 중립 판정 |
+| [key-man-mcp](plugins/key-man-mcp) | Windows 로컬 자격 증명을 모델에 노출하지 않고 Codex·Claude에서 사용하는 MCP 플러그인 |
 
 ## 구조
 

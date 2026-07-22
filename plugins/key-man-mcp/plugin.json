@@ -1,0 +1,9 @@
+{
+  "name": "key-man-mcp",
+  "version": "0.1.0",
+  "description": "Local secret-safe MCP integration for KeyMan, Codex, and Claude Code.",
+  "author": "jaywapp",
+  "license": "MIT",
+  "tags": ["mcp", "secrets", "credentials", "codex", "claude", "windows"],
+  "platforms": ["codex", "claude", "mcp"]
+}

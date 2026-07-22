@@ -1,22 +1,7 @@
 {
-  "updatedAt": "2026-06-13T00:00:00.000Z",
+  "updatedAt": "2026-07-22T11:38:10.581Z",
   "count": 4,
   "plugins": [
-    {
-      "name": "example-plugin",
-      "version": "1.0.0",
-      "description": "AI Marketplace 예제 플러그인",
-      "author": "jaywapp",
-      "license": "MIT",
-      "tags": [
-        "example",
-        "template"
-      ],
-      "platforms": [
-        "claude"
-      ],
-      "path": "plugins/example-plugin"
-    },
     {
       "name": "agent-team-manager",
       "version": "1.0.0",
@@ -36,23 +21,6 @@
       "path": "plugins/agent-team-manager"
     },
     {
-      "name": "qa-workflow",
-      "version": "1.0.0",
-      "description": "QA workflow automation plugin for Claude Code",
-      "author": "jaywapp",
-      "license": "MIT",
-      "tags": [
-        "qa",
-        "workflow",
-        "automation",
-        "testing"
-      ],
-      "platforms": [
-        "claude"
-      ],
-      "path": "plugins/qa-workflow"
-    },
-    {
       "name": "debate",
       "version": "1.0.0",
       "description": "Claude ↔ Codex 멀티라운드 토론 + 중립 판정. 아키텍처/설계 결정 전 양측 논거를 수집한다.",
@@ -69,6 +37,42 @@
         "claude"
       ],
       "path": "plugins/debate"
+    },
+    {
+      "name": "example-plugin",
+      "version": "1.0.0",
+      "description": "AI Marketplace 예제 플러그인",
+      "author": "jaywapp",
+      "license": "MIT",
+      "tags": [
+        "example",
+        "template"
+      ],
+      "platforms": [
+        "claude"
+      ],
+      "path": "plugins/example-plugin"
+    },
+    {
+      "name": "key-man-mcp",
+      "version": "0.1.0",
+      "description": "Local secret-safe MCP integration for KeyMan, Codex, and Claude Code.",
+      "author": "jaywapp",
+      "license": "MIT",
+      "tags": [
+        "mcp",
+        "secrets",
+        "credentials",
+        "codex",
+        "claude",
+        "windows"
+      ],
+      "platforms": [
+        "codex",
+        "claude",
+        "mcp"
+      ],
+      "path": "plugins/key-man-mcp"
     }
   ]
 }

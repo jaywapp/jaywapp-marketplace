@@ -27,6 +27,16 @@
       },
       "license": "MIT",
       "keywords": ["debate", "codex", "decision-making", "code-review", "multi-agent"]
+    },
+    {
+      "name": "key-man-mcp",
+      "source": "./plugins/key-man-mcp",
+      "description": "Use the local KeyMan Windows credential vault from Claude Code without returning secret values to the model.",
+      "author": {
+        "name": "jaywapp"
+      },
+      "license": "MIT",
+      "keywords": ["mcp", "secrets", "credentials", "windows", "keyman"]
     }
   ]
 }

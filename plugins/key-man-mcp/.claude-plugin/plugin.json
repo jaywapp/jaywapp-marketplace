@@ -1,0 +1,9 @@
+{
+  "name": "key-man-mcp",
+  "version": "0.1.0",
+  "description": "Use locally stored KeyMan credentials from Claude Code without exposing secret values to the model.",
+  "author": {
+    "name": "jaywapp"
+  },
+  "mcpServers": "./.mcp.json"
+}

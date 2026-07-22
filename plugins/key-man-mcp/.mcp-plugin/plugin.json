@@ -1,0 +1,7 @@
+{
+  "name": "key-man-mcp",
+  "version": "0.1.0",
+  "description": "Local stdio MCP server configuration for the KeyMan Windows credential vault.",
+  "author": "jaywapp",
+  "license": "MIT"
+}
