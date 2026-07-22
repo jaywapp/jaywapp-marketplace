@@ -1,0 +1,19 @@
+{
+  "name": "key-man-mcp",
+  "version": "0.1.0",
+  "description": "Use locally stored KeyMan credentials from Codex without exposing secret values to the model.",
+  "author": {
+    "name": "jaywapp"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "KeyMan MCP",
+    "shortDescription": "Use local secrets without revealing them to AI.",
+    "longDescription": "Connect Codex to the local KeyMan Windows vault. List metadata, copy secrets locally, register from the clipboard or environment, and remove entries without returning secret values through MCP.",
+    "developerName": "jaywapp",
+    "category": "Developer Tools",
+    "capabilities": ["MCP server", "Windows Credential Manager", "secret-safe workflows"],
+    "defaultPrompt": "List the credentials available in KeyMan without exposing any secret values."
+  },
+  "mcpServers": "./.mcp.json"
+}
