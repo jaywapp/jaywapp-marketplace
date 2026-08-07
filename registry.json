@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-07-22T11:38:10.581Z",
-  "count": 4,
+  "updatedAt": "2026-08-12T00:00:00.000Z",
+  "count": 5,
   "plugins": [
     {
       "name": "agent-team-manager",
@@ -73,6 +73,26 @@
         "mcp"
       ],
       "path": "plugins/key-man-mcp"
+    },
+    {
+      "name": "toss-mcp",
+      "version": "0.1.0",
+      "description": "토스증권 Open API 를 읽기 전용 MCP 도구로 노출한다. 국내·미국 주식의 시세, 종목 정보, 환율·장 운영 시간, 랭킹·지표를 조회한다.",
+      "author": "jaywapp",
+      "license": "MIT",
+      "tags": [
+        "mcp",
+        "toss",
+        "stock",
+        "market-data",
+        "korea",
+        "read-only"
+      ],
+      "platforms": [
+        "claude",
+        "codex"
+      ],
+      "repository": "https://github.com/jaywapp/toss-readonly-mcp"
     }
   ]
 }
