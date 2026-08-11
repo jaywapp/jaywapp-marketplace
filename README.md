@@ -10,6 +10,8 @@ Claude Code 플러그인, MCP 서버, OpenAI Codex 플러그인, Cursor 확장 �
 | [qa-workflow](plugins/qa-workflow) | QA 리포트 → 코드 수정 → GitHub PR 자동화 워크플로우 |
 | [debate](plugins/debate) | Claude ↔ Codex 멀티라운드 토론 + 중립 판정 |
 | [key-man-mcp](plugins/key-man-mcp) | Windows 로컬 자격 증명을 모델에 노출하지 않고 Codex·Claude에서 사용하는 MCP 플러그인 |
+| [agent-team-manager](plugins/agent-team-manager) | AI 에이전트 팀의 동작·효율·토큰 사용 점검 |
+| [toss-mcp](https://github.com/jaywapp/toss-readonly-mcp) | 토스증권 읽기 전용 시세 MCP (외부 저장소) |
 
 ## 구조
 
