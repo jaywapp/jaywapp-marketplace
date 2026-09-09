@@ -28,6 +28,11 @@ function validate(pluginPath) {
     return errors;
   }
 
+  if (meta === null || typeof meta !== 'object' || Array.isArray(meta)) {
+    errors.push('plugin.json은 객체여야 합니다');
+    return errors;
+  }
+
   for (const field of REQUIRED_FIELDS) {
     if (!meta[field]) errors.push(`필수 필드 누락: ${field}`);
   }
