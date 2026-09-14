@@ -1,0 +1,6 @@
+{
+  "name": "skill-optimize",
+  "version": "1.0.0",
+  "description": "Measure and restructure SKILL.md context costs with progressive disclosure.",
+  "skills": "./skills/"
+}

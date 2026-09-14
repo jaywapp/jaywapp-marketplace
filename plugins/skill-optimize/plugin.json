@@ -1,0 +1,17 @@
+{
+  "name": "skill-optimize",
+  "version": "1.0.0",
+  "description": "SKILL.md의 컨텍스트 비용을 측정하고 progressive disclosure 구조로 재설계하는 스킬",
+  "author": "jaywapp",
+  "license": "MIT",
+  "tags": [
+    "skill",
+    "optimization",
+    "token-efficiency",
+    "progressive-disclosure",
+    "context-engineering"
+  ],
+  "platforms": [
+    "claude"
+  ]
+}
