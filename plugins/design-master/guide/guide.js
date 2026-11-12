@@ -9,6 +9,8 @@
   const defs = {}, failed = {}, loading = {};
   const warn = (...a) => { if (w.console) w.console.warn('[UIGuide]', ...a); };
   const escT = s => String(s == null ? '' : s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  // Korean particle: 과 after a final consonant, 와 otherwise (non-Hangul endings default to 와).
+  const wa = s => { const c = String(s || '').trim().slice(-1).charCodeAt(0); return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 ? '과' : '와'; };
   const codeify = s => escT(s).replace(/((?:aria-[a-z]+|role)(?:="[a-z]+")?)/g, '<code>$1</code>');
 
   /* ---------- registration ---------- */
@@ -129,7 +131,7 @@
         <div class="ww"><div class="w"><h2>${K.icon('checkCircle')}언제</h2><p>${escT(e.when)}</p></div><div class="w no"><h2>${K.icon('xCircle')}피할 때</h2><p>${escT(e.avoid)}</p></div></div>
         <div class="tabs"><div class="tablist" role="tablist" aria-label="${escT(e.ko)} 자세히">
           <button role="tab" id="t-notes" type="button" aria-controls="p-notes" aria-selected="${tab === 'notes'}" tabindex="${tab === 'notes' ? 0 : -1}">구현할 때</button>
-          <button role="tab" id="t-vs" type="button" aria-controls="p-vs" aria-selected="${tab === 'vs'}" tabindex="${tab === 'vs' ? 0 : -1}">${escT(v.name || '비슷한 것')}와 차이</button></div>
+          <button role="tab" id="t-vs" type="button" aria-controls="p-vs" aria-selected="${tab === 'vs'}" tabindex="${tab === 'vs' ? 0 : -1}">${escT(v.name || '비슷한 것')}${wa(v.name || '비슷한 것')} 차이</button></div>
           <div class="panel" role="tabpanel" id="p-notes" aria-labelledby="t-notes"${tab === 'notes' ? '' : ' hidden'}>${notesHtml(e)}</div>
           <div class="panel" role="tabpanel" id="p-vs" aria-labelledby="t-vs"${tab === 'vs' ? '' : ' hidden'}>${vsHtml(t, e)}</div></div>
         <button class="sbtn morem" type="button" id="moreM">구현 메모와 차이 보기</button>
@@ -189,7 +191,7 @@
   function openSheet() {
     const t = cur.t, df = ready(t); if (!df) return;
     const e = df.elements[cur.idx], v = vsInfo(t, e);
-    $('#mBody').innerHTML = `<h2 id="mTitle">${escT(e.ko)}</h2><p class="en">${escT(e.en)}</p><h3>구현할 때</h3><div class="panel">${notesHtml(e)}</div><h3>${escT(v.name || '비슷한 것')}와 차이</h3><div class="panel">${vsHtml(t, e)}</div>`;
+    $('#mBody').innerHTML = `<h2 id="mTitle">${escT(e.ko)}</h2><p class="en">${escT(e.en)}</p><h3>구현할 때</h3><div class="panel">${notesHtml(e)}</div><h3>${escT(v.name || '비슷한 것')}${wa(v.name || '비슷한 것')} 차이</h3><div class="panel">${vsHtml(t, e)}</div>`;
     msheet.showModal();
   }
   [program, msheet].forEach(dl => dl.addEventListener('click', ev => { if (ev.target === dl) dl.close(); }));
