@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- FILL: 요소 이름 -->
+<title>요소 데모 - 스낵바</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f6f4;
+    --surface: #ffffff;
+    --text: #1c1c1a;
+    --muted: #5c5c58;
+    --border: #d9d9d4;
+    --accent: #2f4f9d;
+    --accent-bg: #e8edf9;
+    --on-accent: #ffffff;
+    --good: #1f6b3a;
+    --bad: #8a3b1f;
+    --focus: #2f4f9d;
+    --toast-bg: #2a2a27;
+    --toast-text: #f3f3ef;
+    --toast-action: #b9c9f5;
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+    --space-6: 24px; --space-8: 32px; --space-12: 48px;
+    --radius: 12px;
+    --font: system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141413; --surface: #1d1d1b; --text: #ecece8; --muted: #a5a5a0;
+      --border: #3a3a36; --accent: #9db3ee; --accent-bg: #232a40; --on-accent: #14151a;
+      --good: #7fcf9b; --bad: #e8a285; --focus: #9db3ee;
+      --toast-bg: #ecece8; --toast-text: #1c1c1a; --toast-action: #2f4f9d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141413; --surface: #1d1d1b; --text: #ecece8; --muted: #a5a5a0;
+    --border: #3a3a36; --accent: #9db3ee; --accent-bg: #232a40; --on-accent: #14151a;
+    --good: #7fcf9b; --bad: #e8a285; --focus: #9db3ee;
+    --toast-bg: #ecece8; --toast-text: #1c1c1a; --toast-action: #2f4f9d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 var(--font); }
+  .page { max-width: 880px; margin: 0 auto; padding: var(--space-8) var(--space-4) var(--space-12); }
+  @media (min-width: 768px) { .page { padding-inline: var(--space-6); } }
+
+  header { display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-6); }
+  h1 { margin: 0 0 var(--space-2); font-size: 24px; line-height: 32px; font-weight: 650; }
+  .lead { margin: 0; max-width: 65ch; color: var(--muted); }
+  .kicker { margin: 0 0 var(--space-1); color: var(--muted); font-size: 14px; }
+
+  button { font: inherit; }
+  button.tool, button.btn {
+    min-height: 44px; padding: 0 var(--space-4); border: 1px solid var(--border);
+    border-radius: 8px; background: var(--surface); color: var(--text); cursor: pointer;
+  }
+  button.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+  button.tool:hover, button.btn:hover { border-color: var(--accent); }
+  button:active { filter: brightness(0.95); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  .demo {
+    position: relative; overflow: hidden; min-height: 360px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: var(--space-4); margin-bottom: var(--space-6);
+  }
+  .demo h2 { margin: 0 0 var(--space-3); font-size: 16px; line-height: 24px; color: var(--muted); font-weight: 600; }
+
+  /* 예시 데모: 목록 항목 삭제 후 되돌리기 스낵바. 요소에 맞게 교체한다. */
+  .list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .item { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-4); border: 1px solid var(--border); border-radius: 8px; }
+  .empty { margin: 0; padding: var(--space-8) 0; text-align: center; color: var(--muted); }
+
+  .snackbar {
+    position: absolute; left: var(--space-4); right: var(--space-4); bottom: var(--space-4);
+    max-width: 560px; margin-inline: auto;
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4); min-height: 48px;
+    background: var(--toast-bg); color: var(--toast-text); border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transform: translateY(16px); opacity: 0; visibility: hidden;
+    transition: transform 200ms ease-out, opacity 200ms ease-out, visibility 200ms;
+  }
+  .snackbar.show { transform: none; opacity: 1; visibility: visible; }
+  .snackbar button {
+    min-height: 44px; padding: 0 var(--space-3); border: 0; border-radius: 6px;
+    background: transparent; color: var(--toast-action); font-weight: 650; cursor: pointer;
+  }
+  .snackbar button:focus-visible { outline: 2px solid var(--toast-action); outline-offset: 2px; }
+
+  .summary { display: grid; gap: var(--space-4); }
+  @media (min-width: 768px) { .summary { grid-template-columns: 1fr 1fr; } }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-4); }
+  .card h2 { margin: 0 0 var(--space-2); font-size: 16px; line-height: 24px; }
+  .card.when h2 { color: var(--good); }
+  .card.avoid h2 { color: var(--bad); }
+  .card ul { margin: 0; padding-left: var(--space-4); display: grid; gap: var(--space-1); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div>
+      <!-- FILL: 분류(예: 알림·피드백) -->
+      <p class="kicker">알림·피드백</p>
+      <!-- FILL: 요소 이름(한글과 영어) -->
+      <h1>스낵바 (Snackbar)</h1>
+      <!-- FILL: 한 줄 설명 -->
+      <p class="lead">되돌리기 같은 액션 하나를 붙일 수 있는, 화면 아래의 짧은 알림입니다.</p>
+    </div>
+    <button type="button" class="tool" id="themeToggle" aria-pressed="false">다크로 보기</button>
+  </header>
+
+  <!-- FILL: 데모 영역. 사용자가 직접 눌러 보고 상태를 바꿔 볼 수 있어야 한다 -->
+  <section class="demo" aria-labelledby="demoTitle">
+    <h2 id="demoTitle">직접 눌러 보세요</h2>
+    <ul class="list" id="list"></ul>
+    <p class="empty" id="empty" hidden>모두 지웠어요. 아래 버튼으로 목록을 되돌려 볼 수 있어요.</p>
+    <div style="margin-top:16px">
+      <button type="button" class="btn" id="reset">목록 다시 채우기</button>
+    </div>
+    <div class="snackbar" id="snackbar" role="status" aria-live="polite">
+      <span id="snackText"></span>
+      <button type="button" id="undo">되돌리기</button>
+    </div>
+  </section>
+
+  <!-- FILL: 언제와 피할 때 요약. references의 해당 항목에서 가져와 쓴다 -->
+  <section class="summary" aria-label="사용 기준">
+    <div class="card when">
+      <h2>언제 쓰나</h2>
+      <ul>
+        <li>삭제, 보관처럼 되돌릴 수 있는 행동의 결과를 알릴 때</li>
+        <li>취소 기회를 짧게 주고 싶을 때</li>
+      </ul>
+    </div>
+    <div class="card avoid">
+      <h2>피할 때</h2>
+      <ul>
+        <li>액션이 필요 없는 단순 확인은 토스트</li>
+        <li>놓치면 안 되는 오류는 인라인 오류나 배너</li>
+      </ul>
+    </div>
+  </section>
+</main>
+<script>
+  (function () {
+    var root = document.documentElement;
+    var themeBtn = document.getElementById('themeToggle');
+    var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    function applyTheme(isDark) {
+      root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      themeBtn.setAttribute('aria-pressed', String(isDark));
+      themeBtn.textContent = isDark ? '라이트로 보기' : '다크로 보기';
+    }
+    applyTheme(dark);
+    themeBtn.addEventListener('click', function () { applyTheme(root.getAttribute('data-theme') !== 'dark'); });
+
+    // 예시 데모 로직. 요소가 바뀌면 이 부분을 교체한다.
+    var initial = ['주간 회의록', '디자인 시안 검토', '영수증 정리'];
+    var items = initial.slice();
+    var list = document.getElementById('list');
+    var empty = document.getElementById('empty');
+    var bar = document.getElementById('snackbar');
+    var text = document.getElementById('snackText');
+    var undoBtn = document.getElementById('undo');
+    var removed = null;
+    var timer = null;
+
+    function render() {
+      list.innerHTML = '';
+      items.forEach(function (name, i) {
+        var li = document.createElement('li');
+        li.className = 'item';
+        var span = document.createElement('span');
+        span.textContent = name;
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn';
+        btn.textContent = '삭제';
+        btn.setAttribute('aria-label', name + ' 삭제');
+        btn.addEventListener('click', function () { removeItem(i); });
+        li.appendChild(span);
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+      empty.hidden = items.length > 0;
+    }
+
+    function show(msg) {
+      text.textContent = msg;
+      bar.classList.add('show');
+      clearTimeout(timer);
+      timer = setTimeout(hide, 6000); // 액션이 있는 스낵바는 최소 5초 이상
+    }
+    function hide() { bar.classList.remove('show'); removed = null; }
+
+    // 삭제나 되돌리기로 누른 버튼이 사라져도 포커스가 body로 떨어지지 않게 옮긴다.
+    function focusItem(index) {
+      var buttons = list.querySelectorAll('button');
+      if (buttons.length) {
+        buttons[Math.min(index, buttons.length - 1)].focus();
+      } else {
+        document.getElementById('reset').focus();
+      }
+    }
+
+    function removeItem(i) {
+      removed = { name: items[i], index: i };
+      items.splice(i, 1);
+      render();
+      focusItem(i);
+      // 조사에 의존하지 않는 문구
+      show("'" + removed.name + "' 항목을 삭제했어요");
+    }
+    undoBtn.addEventListener('click', function () {
+      if (!removed) { return; }
+      var idx = removed.index;
+      items.splice(idx, 0, removed.name);
+      render();
+      hide();
+      focusItem(idx);
+    });
+    // 마우스를 올리거나 키보드 포커스가 안에 있는 동안은 타이머를 멈추고, 벗어나면 다시 시작한다.
+    function pause() { clearTimeout(timer); }
+    function resume() { if (bar.classList.contains('show')) { clearTimeout(timer); timer = setTimeout(hide, 3000); } }
+    bar.addEventListener('mouseenter', pause);
+    bar.addEventListener('mouseleave', function () { if (!bar.contains(document.activeElement)) { resume(); } });
+    bar.addEventListener('focusin', pause);
+    bar.addEventListener('focusout', function (e) { if (!bar.contains(e.relatedTarget)) { resume(); } });
+    document.getElementById('reset').addEventListener('click', function () { items = initial.slice(); render(); hide(); });
+
+    render();
+  })();
+</script>
+</body>
+</html>

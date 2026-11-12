@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- FILL: 결정 지점 이름과 화면 이름 -->
+<title>시안 비교 - 결정 지점 이름</title>
+<style>
+  /* 틀의 색과 간격은 중립적으로 조용하게 둔다. 시안(.stage 안)이 주인공이다. */
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f6f4;
+    --surface: #ffffff;
+    --text: #1c1c1a;
+    --muted: #5c5c58;
+    --border: #d9d9d4;
+    --accent: #2f4f9d;
+    --accent-bg: #e8edf9;
+    --good: #1f6b3a;
+    --bad: #8a3b1f;
+    --focus: #2f4f9d;
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+    --space-6: 24px; --space-8: 32px; --space-12: 48px;
+    --radius: 12px;
+    --font: system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141413; --surface: #1d1d1b; --text: #ecece8; --muted: #a5a5a0;
+      --border: #3a3a36; --accent: #9db3ee; --accent-bg: #232a40;
+      --good: #7fcf9b; --bad: #e8a285; --focus: #9db3ee;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141413; --surface: #1d1d1b; --text: #ecece8; --muted: #a5a5a0;
+    --border: #3a3a36; --accent: #9db3ee; --accent-bg: #232a40;
+    --good: #7fcf9b; --bad: #e8a285; --focus: #9db3ee;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.5 var(--font);
+  }
+  .page { max-width: 1200px; margin: 0 auto; padding: var(--space-8) var(--space-4) var(--space-12); }
+  @media (min-width: 768px) { .page { padding-inline: var(--space-6); } }
+
+  header.top { display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-8); }
+  .step { margin: 0 0 var(--space-1); color: var(--muted); font-size: 14px; }
+  h1 { margin: 0 0 var(--space-2); font-size: 24px; line-height: 32px; font-weight: 650; }
+  .context { margin: 0; max-width: 65ch; color: var(--muted); }
+  .tools { display: flex; gap: var(--space-2); }
+  button.tool {
+    min-height: 44px; padding: 0 var(--space-4); border: 1px solid var(--border);
+    border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; cursor: pointer;
+  }
+  button.tool:hover { border-color: var(--accent); }
+  button.tool:active { background: var(--accent-bg); }
+  button.tool:focus-visible, a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  button.tool[aria-pressed="true"] { background: var(--accent-bg); border-color: var(--accent); }
+
+  /* 폰 시안 한 칸의 최소 폭 = 프레임 406px(내용 390 + 테두리 16) + 후보 카드 패딩 32 + 시안 영역 테두리 2 = 440px.
+     열이 이 폭을 보장하고, 화면이 더 좁으면 한 열로 줄바꿈하며 시안 영역만 가로 스크롤된다. */
+  .candidates { display: grid; gap: var(--space-6); grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); align-items: start; }
+  .frame-off .candidates { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  .candidate { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-4); min-width: 0; }
+  .candidate[data-recommended="true"] { border-color: var(--accent); }
+  .cand-head { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); flex-wrap: wrap; }
+  .label {
+    display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px;
+    border-radius: 8px; background: var(--text); color: var(--bg); font-weight: 700;
+  }
+  .pattern { margin: 0; font-size: 18px; line-height: 24px; font-weight: 650; }
+  .rec { margin-left: auto; padding: 2px var(--space-2); border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-size: 14px; font-weight: 600; }
+  .pc { display: grid; gap: var(--space-2); margin: 0 0 var(--space-4); padding: 0; list-style: none; font-size: 14px; }
+  .pc li { display: grid; grid-template-columns: 48px 1fr; gap: var(--space-2); }
+  .pc .tag { font-weight: 600; }
+  .pc .pro .tag { color: var(--good); }
+  .pc .con .tag { color: var(--bad); }
+  .why { margin: 0 0 var(--space-4); font-size: 14px; color: var(--muted); }
+
+  /* 시안 영역. 안쪽 UI는 이 영역 안에서 자기 스타일을 쓴다. */
+  .stage {
+    border: 1px dashed var(--border); border-radius: 8px; padding: var(--space-4);
+    background: var(--bg); overflow: auto;
+  }
+  /* content-box: 폭 390px는 내용 폭이고 테두리 8px 두 줄은 바깥에 더해진다(전체 406px). */
+  .phone {
+    box-sizing: content-box; width: 390px; margin: 0 auto; min-height: 640px;
+    border: 8px solid var(--text); border-radius: 36px; background: var(--surface); overflow: hidden;
+    position: relative;
+  }
+  .stage.is-phone { display: block; overflow-x: auto; padding: var(--space-4) 0; background: transparent; border-style: none; }
+  .frame-off .stage.is-phone { padding: 0; }
+  .frame-off .phone { box-sizing: border-box; width: 100%; border: 0; border-radius: 0; min-height: 0; }
+
+  /* 모션 시안: 재생 버튼으로 한 번 재생한다. 틀은 시안 영역의 모션을 막지 않는다(비교를 위해). */
+  .play-row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-3); }
+  .motion-note { display: none; margin: 0; font-size: 14px; color: var(--muted); }
+  .reduced .motion-note { display: block; }
+  @keyframes demo-slide { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .stage.playing .demo-motion { animation: demo-slide 300ms ease-out both; }
+
+  footer { margin-top: var(--space-8); color: var(--muted); font-size: 14px; }
+  /* 틀 자체에는 모션이 없고 시안의 모션 처리는 시안이 맡는다. */
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="top">
+    <div>
+      <!-- FILL: 단계 번호와 전체 단계 수 -->
+      <p class="step">단계 1 / 4</p>
+      <!-- FILL: 결정 지점 이름 -->
+      <h1>결정 지점 이름</h1>
+      <!-- FILL: 화면 맥락 한 줄(어떤 화면, 누가, 무엇을 하는지) -->
+      <p class="context">화면 맥락 한 줄: 어떤 화면이고 사용자가 여기서 무엇을 하는지.</p>
+    </div>
+    <div class="tools">
+      <button type="button" class="tool" id="frameToggle" aria-pressed="true">모바일 프레임</button>
+      <button type="button" class="tool" id="themeToggle" aria-pressed="false">다크로 보기</button>
+    </div>
+  </header>
+
+  <!-- 후보 하나 = article.candidate 하나(2~4개). 열 수는 CSS가 폭에 맞춰 자동으로 정한다 -->
+  <section class="candidates" aria-label="후보 시안">
+
+    <!-- 후보 A. 추천이면 data-recommended="true"와 .rec 배지를 둔다 -->
+    <article class="candidate" data-recommended="true">
+      <div class="cand-head">
+        <span class="label" aria-hidden="true">A</span>
+        <!-- FILL: 패턴 이름(한글과 영어) -->
+        <h2 class="pattern"><span class="sr-only">후보 A: </span>패턴 이름 A</h2>
+        <span class="rec">추천</span>
+      </div>
+      <ul class="pc">
+        <!-- FILL: 이 상황에서의 장점과 단점 각 1~2개 -->
+        <li class="pro"><span class="tag">장점</span><span>이 화면의 내용 기준 장점</span></li>
+        <li class="con"><span class="tag">단점</span><span>이 화면의 내용 기준 단점</span></li>
+      </ul>
+      <!-- FILL: 추천이면 이유 한 줄. 추천이 아니면 이 줄을 지운다 -->
+      <p class="why">추천 이유: 한 줄.</p>
+      <!-- FILL: 시안. 모바일이면 .phone 안에, 웹이면 .phone 없이 바로 -->
+      <div class="stage is-phone">
+        <div class="phone">
+          <!-- 시안 시작: 아래 예시를 실제 화면의 마크업과 스타일로 교체한다 -->
+          <div style="padding:24px;font-size:16px;line-height:24px;color:var(--text)">
+            <p style="margin:0 0 16px;font-weight:650;font-size:20px;line-height:28px">시안 A 예시 화면</p>
+            <p style="margin:0 0 32px;color:var(--muted)">여기에 실제 화면의 내용과 요소를 그린다.</p>
+            <button type="button" style="min-height:48px;padding:0 24px;border:0;border-radius:12px;background:var(--accent);color:var(--surface);font:inherit;font-weight:600;cursor:pointer">주 행동</button>
+          </div>
+          <!-- 시안 끝 -->
+        </div>
+      </div>
+    </article>
+
+    <!-- 후보 B -->
+    <article class="candidate">
+      <div class="cand-head">
+        <span class="label" aria-hidden="true">B</span>
+        <h2 class="pattern"><span class="sr-only">후보 B: </span>패턴 이름 B</h2>
+      </div>
+      <ul class="pc">
+        <li class="pro"><span class="tag">장점</span><span>이 화면의 내용 기준 장점</span></li>
+        <li class="con"><span class="tag">단점</span><span>이 화면의 내용 기준 단점</span></li>
+      </ul>
+      <!-- 모션 후보라면 이 줄을 남기고 시안 안의 움직이는 요소에 class="demo-motion"을 준다. 모션이 없으면 .play-row와 .motion-note를 지운다 -->
+      <div class="play-row">
+        <button type="button" class="tool play" data-play>재생</button>
+        <p class="motion-note">모션 감소 설정이 켜져 있어도 비교를 위해 재생됩니다. 실제 제품에서는 이 설정을 따릅니다.</p>
+      </div>
+      <div class="stage is-phone">
+        <div class="phone">
+          <div style="padding:24px;font-size:16px;line-height:24px;color:var(--text)">
+            <p class="demo-motion" style="margin:0 0 16px;font-weight:650;font-size:20px;line-height:28px">시안 B 예시 화면</p>
+            <p style="margin:0 0 32px;color:var(--muted)">후보끼리는 이 결정 지점만 다르고 나머지는 같게 한다.</p>
+            <button type="button" style="min-height:48px;padding:0 24px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--accent);font:inherit;font-weight:600;cursor:pointer">주 행동</button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 후보 C, D가 필요하면 위 article을 복사하고 label과 sr-only 라벨을 바꾼다 -->
+  </section>
+
+  <footer>
+    <!-- FILL: 고르는 방법 안내 한 줄 -->
+    <p>채팅에서 A, B처럼 번호로 고르거나 섞고 싶은 부분을 알려 주세요.</p>
+  </footer>
+</main>
+<script>
+  (function () {
+    var root = document.documentElement;
+    var themeBtn = document.getElementById('themeToggle');
+    var frameBtn = document.getElementById('frameToggle');
+    var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    function applyTheme(isDark) {
+      root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      themeBtn.setAttribute('aria-pressed', String(isDark));
+      themeBtn.textContent = isDark ? '라이트로 보기' : '다크로 보기';
+    }
+    applyTheme(dark);
+    themeBtn.addEventListener('click', function () {
+      applyTheme(root.getAttribute('data-theme') !== 'dark');
+    });
+
+    frameBtn.addEventListener('click', function () {
+      var off = document.body.classList.toggle('frame-off');
+      frameBtn.setAttribute('aria-pressed', String(!off));
+    });
+
+    // 모션 시안: 재생 버튼이 가장 가까운 후보의 .stage에 playing 클래스를 한 번 걸어 애니메이션을 다시 시작한다.
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.body.classList.add('reduced');
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('[data-play]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var stage = btn.closest('.candidate').querySelector('.stage');
+        stage.classList.remove('playing');
+        void stage.offsetWidth; // 같은 애니메이션을 다시 시작하기 위한 reflow
+        stage.classList.add('playing');
+      });
+    });
+  })();
+</script>
+</body>
+</html>
