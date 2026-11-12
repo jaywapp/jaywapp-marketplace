@@ -21,11 +21,33 @@ description: UI 요소 전체를 한 페이지로 훑어볼 수 있는 가이드
 
 ## 주제 id 표
 
-<!-- TODO(guide 완성 후 채움): 가이드 페이지의 실제 앵커 id와 주제 이름. 현재는 비어 있다. -->
+요소로 바로 열려면 `index.html#<topic-id>-<element-id>`를 쓴다(예: `#feedback-snackbar`). 요소 id는 `guide/topics/_manifest.js`에 있다.
 
 | 주제 | topic-id |
 |---|---|
-| (가이드 완성 후 채움) | |
+| 웹 레이아웃 | web-layouts |
+| 화면 배치 | screen-layouts |
+| 화면 이동(내비게이션) | navigation |
+| 하단 메뉴 스타일 | bottom-nav-styles |
+| 탭 바 전환 모션 | tab-bar-motion |
+| 알림·피드백 | feedback |
+| 버튼 상태 | button-states |
+| 입력 | inputs |
+| 헷갈리는 짝 | confusable-pairs |
+| 빈 화면 | empty-states |
+| 로딩 패턴 | loading |
+| 인디케이터 | indicators |
+| 완료 표시 | completion |
+| 앱 첫 화면 | first-run |
+| 움직임 이름 | motion-names |
+| 화면 전환 | transitions |
+| 텍스트 등장 | text-reveal |
+| 제스처 | gestures |
+| 평점 UI | ratings |
+| 공유 | sharing |
+| AI 채팅 화면 | ai-chat |
+| 디자인 스타일 | design-styles |
+| 모바일 스페이싱 | spacing |
 
 ## 하지 않는 것
 
