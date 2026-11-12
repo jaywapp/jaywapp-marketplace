@@ -1,0 +1,55 @@
+---
+name: guide
+description: UI 요소 전체를 한 페이지로 훑어볼 수 있는 가이드 페이지를 브라우저로 연다. "UI 가이드 열어줘", "UI 요소 전체 보여줘", "가이드 페이지", "UI 요소 한눈에 보고 싶어", "토스트 가이드 보여줘" 같은 요청에 쓴다. 주제(내비게이션, 피드백, 모션 등)를 말하면 그 부분으로 바로 연다. 개별 요소의 설명 질문은 lookup, 시안 비교는 propose를 쓴다.
+---
+
+# UI 가이드 페이지 열기
+
+플러그인에 들어 있는 가이드 페이지를 브라우저로 연다. 가이드 페이지는 별도 작업으로 만드는 중이며, 이 스킬은 그 페이지를 여는 역할만 한다.
+
+## 파일
+
+- 가이드: `${CLAUDE_PLUGIN_ROOT}/guide/index.html`
+- 이 변수가 치환되지 않으면 이 스킬 폴더 기준 `../../guide/index.html`을 쓴다.
+
+## 절차
+
+1. 가이드 파일이 있는지 확인한다. 없으면 "가이드 페이지가 아직 만들어지지 않았습니다"라고 알리고 대신 lookup으로 답할 수 있다고 안내한다. 파일을 임의로 만들지 않는다.
+2. 사용자가 주제를 말했으면 아래 주제 id 표에서 맞는 id를 찾아 `index.html#<topic-id>`로 연다. 표에 없는 주제면 앵커 없이 열고 그렇게 했다고 알린다. 주제를 말하지 않았으면 앵커 없이 연다.
+3. 브라우저로 연다. PowerShell은 `Start-Process <경로>`, Git Bash는 `start "" <경로>`, macOS는 `open <경로>`, Linux는 `xdg-open <경로>`. `#앵커`가 필요하면 `file:///` URL 형태(`file:///<절대경로>/index.html#<topic-id>`)로 연다. 경로는 슬래시로 쓰고 공백은 `%20`으로 바꾼다.
+4. 연 경로와 주제를 한 줄로 알린다.
+
+## 주제 id 표
+
+요소로 바로 열려면 `index.html#<topic-id>-<element-id>`를 쓴다(예: `#feedback-snackbar`). 요소 id는 `guide/topics/_manifest.js`에 있다.
+
+| 주제 | topic-id |
+|---|---|
+| 웹 레이아웃 | web-layouts |
+| 화면 배치 | screen-layouts |
+| 화면 이동(내비게이션) | navigation |
+| 하단 메뉴 스타일 | bottom-nav-styles |
+| 탭 바 전환 모션 | tab-bar-motion |
+| 알림·피드백 | feedback |
+| 버튼 상태 | button-states |
+| 입력 | inputs |
+| 헷갈리는 짝 | confusable-pairs |
+| 빈 화면 | empty-states |
+| 로딩 패턴 | loading |
+| 인디케이터 | indicators |
+| 완료 표시 | completion |
+| 앱 첫 화면 | first-run |
+| 움직임 이름 | motion-names |
+| 화면 전환 | transitions |
+| 텍스트 등장 | text-reveal |
+| 제스처 | gestures |
+| 평점 UI | ratings |
+| 공유 | sharing |
+| AI 채팅 화면 | ai-chat |
+| 디자인 스타일 | design-styles |
+| 모바일 스페이싱 | spacing |
+
+## 하지 않는 것
+
+- 가이드 파일을 만들거나 고치지 않는다.
+- 표에 없는 id를 추측해서 앵커로 쓰지 않는다.
